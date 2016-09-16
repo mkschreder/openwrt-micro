@@ -350,7 +350,7 @@ EOF
 		next if @{$target->{subtargets}} > 0;
 		print "\tdefault \"".$target->{cflags}."\" if TARGET_".$target->{conf}."\n";
 	}
-	print "\tdefault \"\"\n";
+	print "\tdefault \"-Os -nostdlib -nostartfiles -nodefaultlibs -ffreestanding\"\n";
 	print <<EOF;
 
 config CPU_TYPE

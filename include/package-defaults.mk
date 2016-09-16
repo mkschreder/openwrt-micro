@@ -108,9 +108,6 @@ replace_script=$(FIND) $(1) -name $(2) | $(XARGS) chmod u+w; \
 	       $(SCRIPT_DIR)/$(2);
 
 define Build/Configure/Default
-	echo FOOBAR $$(CONFIGURE_VARS)
-	echo FOOBAR-args $$(CONFIGURE_ARGS)
-	echo FOOBAR2 $$(TARGET_CFLAGS)
 	(cd $(PKG_BUILD_DIR)/$(CONFIGURE_PATH)/$(strip $(3)); \
 	if [ -x $(CONFIGURE_CMD) ]; then \
 		$(call replace_script,$(PKG_BUILD_DIR)/$(3),config.guess) \
