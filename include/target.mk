@@ -25,7 +25,7 @@ endif
 
 target_conf=$(subst .,_,$(subst -,_,$(subst /,_,$(1))))
 ifeq ($(DUMP),)
-  PLATFORM_DIR:=$(TOPDIR)/target/linux/$(BOARD)
+  PLATFORM_DIR:=$(TOPDIR)/target/bare/$(BOARD)
   SUBTARGET:=$(strip $(foreach subdir,$(patsubst $(PLATFORM_DIR)/%/target.mk,%,$(wildcard $(PLATFORM_DIR)/*/target.mk)),$(if $(CONFIG_TARGET_$(call target_conf,$(BOARD)_$(subdir))),$(subdir))))
 else
   PLATFORM_DIR:=${CURDIR}

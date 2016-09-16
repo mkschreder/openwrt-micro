@@ -1,3 +1,0 @@
-#!/bin/sh
-
-mtd fixtrx firmware || mtd fixseama firmware

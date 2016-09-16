@@ -249,7 +249,7 @@ menu "Target Images"
 
 	comment "Image Options"
 
-	source "target/linux/*/image/Config.in"
+	source "target/*/*/image/Config.in"
 
 	config TARGET_KERNEL_PARTSIZE
 		int "Kernel partition size (in MB)"

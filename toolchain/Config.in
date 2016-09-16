@@ -59,8 +59,9 @@ menuconfig EXTERNAL_TOOLCHAIN
 		prompt "Target name"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
 		default "aarch64-unknown-linux-gnu"  if aarch64
+		default "aarch64-unknown-linux-gnu"  if aarch64
 		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
-		default "arm-unknown-linux-gnu"      if arm
+		default "arm-none-eabi"      if arm
 		default "armeb-unknown-linux-gnu"    if armeb
 		default "i486-unknown-linux-gnu"     if i386
 		default "mips-unknown-linux-gnu"     if mips
@@ -74,7 +75,7 @@ menuconfig EXTERNAL_TOOLCHAIN
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
 		default "aarch64-unknown-linux-gnu"  if aarch64
 		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
-		default "arm-unknown-linux-gnu-"      if arm
+		default "arm-none-eabi-"      if arm
 		default "armeb-unknown-linux-gnu-"    if armeb
 		default "i486-unknown-linux-gnu-"     if i386
 		default "mips-unknown-linux-gnu-"     if mips
@@ -88,7 +89,7 @@ menuconfig EXTERNAL_TOOLCHAIN
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
 		default "/opt/cross/aarch64-unknown-linux-gnu"  if aarch64
 		default "/opt/cross/aarch64_be-unknown-linux-gnu"  if aarch64_be
-		default "/opt/cross/arm-unknown-linux-gnu"      if arm
+		default "/opt/cross/arm-none-eabi"      if arm
 		default "/opt/cross/armeb-unknown-linux-gnu"    if armeb
 		default "/opt/cross/i486-unknown-linux-gnu"     if i386
 		default "/opt/cross/mips-unknown-linux-gnu"     if mips
