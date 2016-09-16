@@ -89,7 +89,7 @@ else
           wl='-lopt='
           ;;
         *)
-          case `$CC -V 2>&1 | sed 5q` in
+          case `$CC -v 2>&1 | sed 5q` in
             *Sun\ C*)
               wl='-Wl,'
               ;;

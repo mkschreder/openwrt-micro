@@ -6,13 +6,13 @@
 #
 curdir:=target
 
-$(curdir)/builddirs:=toolchain
+$(curdir)/builddirs:=bare toolchain
 $(curdir)/builddirs-default:=bare
 $(curdir)/builddirs-install:=bare $(if $(CONFIG_SDK),sdk) $(if $(CONFIG_IB),imagebuilder) $(if $(CONFIG_MAKE_TOOLCHAIN),toolchain)
 
 $(curdir)/imagebuilder/install:=$(curdir)/bare/install
 
-$(eval $(call stampfile,$(curdir),target,.config))
+$(eval $(call stampfile,$(curdir),target,prereq,.config))
 $(eval $(call stampfile,$(curdir),target,compile,$(TMP_DIR)/.build))
 $(eval $(call stampfile,$(curdir),target,install,$(TMP_DIR)/.build))
 

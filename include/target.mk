@@ -12,11 +12,12 @@ __target_inc=1
 DEVICE_TYPE?=router
 
 # Default packages - the really basic set
-DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg netifd fstools uclient-fetch logd
+#DEFAULT_PACKAGES:=base-files libc libgcc busybox dropbear mtd uci opkg netifd fstools uclient-fetch logd
+DEFAULT_PACKAGES:=
 # For nas targets
 DEFAULT_PACKAGES.nas:=block-mount fdisk lsblk mdadm
 # For router targets
-DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe firewall odhcpd odhcp6c
+#DEFAULT_PACKAGES.router:=dnsmasq iptables ip6tables ppp ppp-mod-pppoe firewall odhcpd odhcp6c
 DEFAULT_PACKAGES.bootloader:=
 
 ifneq ($(DUMP),)
@@ -201,7 +202,7 @@ ifeq ($(DUMP),1)
     # remove duplicates
     FEATURES:=$(sort $(FEATURES))
   endif
-  CPU_CFLAGS = -Os -pipe
+  CPU_CFLAGS = 
   ifneq ($(findstring mips,$(ARCH)),)
     ifneq ($(findstring mips64,$(ARCH)),)
       CPU_TYPE ?= mips64
@@ -232,6 +233,7 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_arm926ej-s = -march=armv5te -mtune=arm926ej-s
     CPU_CFLAGS_arm1136j-s = -march=armv6 -mtune=arm1136j-s
     CPU_CFLAGS_arm1176jzf-s = -march=armv6 -mtune=arm1176jzf-s
+    CPU_CFLAGS_cortex-m3 = -mcpu=cortex-m3 -mthumb -mlong-calls
     CPU_CFLAGS_cortex-a5 = -march=armv7-a -mtune=cortex-a5
     CPU_CFLAGS_cortex-a7 = -march=armv7-a -mtune=cortex-a7
     CPU_CFLAGS_cortex-a8 = -march=armv7-a -mtune=cortex-a8
@@ -297,10 +299,12 @@ define BuildTargets/DumpCurrent
 	$(if $(SUBTARGET),,@$(foreach SUBTARGET,$(SUBTARGETS),$(SUBMAKE) -s DUMP=1 SUBTARGET=$(SUBTARGET); ))
 endef
 
-include $(INCLUDE_DIR)/kernel.mk
-ifeq ($(TARGET_BUILD),1)
-  include $(INCLUDE_DIR)/kernel-build.mk
-  BuildTarget?=$(BuildKernel)
-endif
+# do not build kernel since we are not using linux
+#include $(INCLUDE_DIR)/kernel.mk
+#ifeq ($(TARGET_BUILD),1)
+#  include $(INCLUDE_DIR)/kernel-build.mk
+#  BuildTarget?=$(BuildKernel)
+#endif
+BuildTarget?=$(BuildKernel)
 
 endif #__target_inc

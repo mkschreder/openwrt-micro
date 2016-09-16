@@ -136,7 +136,7 @@ case "${UNAME_SYSTEM}" in
 Linux|GNU|GNU/*)
 	# If the system lacks a compiler, then just pick glibc.
 	# We could probably try harder.
-	LIBC=gnu
+	LIBC=newlib
 
 	eval $set_cc_for_build
 	cat <<-EOF > $dummy.c
