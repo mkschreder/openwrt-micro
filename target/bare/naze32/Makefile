@@ -14,17 +14,6 @@ CPU_TYPE:=cortex-m3
 
 include $(INCLUDE_DIR)/target.mk
 
-#LINUX_VERSION:=3.18
-
-define BuildKernel 
-dumpinfo: 	
-	echo ""
-prereq: 
-	echo "target prereq"
-compile: 
-	echo "compile target"
-endef
-
 define Target/Description
 	Build firmware images for stm32 cpu
 endef

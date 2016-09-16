@@ -108,7 +108,7 @@ else
 endif
 
 ifneq ($(TARGET_BUILD)$(if $(DUMP),,1),)
-  include $(INCLUDE_DIR)/kernel-version.mk
+#include $(INCLUDE_DIR)/kernel-version.mk
 endif
 
 GENERIC_PLATFORM_DIR := $(TOPDIR)/target/linux/generic
@@ -119,54 +119,54 @@ __config_name_list = $(1)/config-$(KERNEL_PATCHVER) $(1)/config-default
 __config_list = $(firstword $(wildcard $(call __config_name_list,$(1))))
 find_kernel_config=$(if $(__config_list),$(__config_list),$(lastword $(__config_name_list)))
 
-GENERIC_LINUX_CONFIG = $(call find_kernel_config,$(GENERIC_PLATFORM_DIR))
-LINUX_TARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_DIR))
+GENERIC_KERNEL_CONFIG = $(call find_kernel_config,$(GENERIC_PLATFORM_DIR))
+KERNEL_TARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_DIR))
 ifneq ($(PLATFORM_DIR),$(PLATFORM_SUBDIR))
-  LINUX_SUBTARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_SUBDIR))
+  KERNEL_SUBTARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_SUBDIR))
 endif
 
 # config file list used for compiling
-LINUX_KCONFIG_LIST = $(wildcard $(GENERIC_LINUX_CONFIG) $(LINUX_TARGET_CONFIG) $(LINUX_SUBTARGET_CONFIG) $(TOPDIR)/env/kernel-config)
+KERNEL_KCONFIG_LIST = $(wildcard $(GENERIC_KERNEL_CONFIG) $(KERNEL_TARGET_CONFIG) $(KERNEL_SUBTARGET_CONFIG) $(TOPDIR)/env/kernel-config)
 
 # default config list for reconfiguring
 # defaults to subtarget if subtarget exists and target does not
 # defaults to target otherwise
-USE_SUBTARGET_CONFIG = $(if $(wildcard $(LINUX_TARGET_CONFIG)),,$(if $(LINUX_SUBTARGET_CONFIG),1))
+USE_SUBTARGET_CONFIG = $(if $(wildcard $(KERNEL_TARGET_CONFIG)),,$(if $(KERNEL_SUBTARGET_CONFIG),1))
 
-LINUX_RECONFIG_LIST = $(wildcard $(GENERIC_LINUX_CONFIG) $(LINUX_TARGET_CONFIG) $(if $(USE_SUBTARGET_CONFIG),$(LINUX_SUBTARGET_CONFIG)))
-LINUX_RECONFIG_TARGET = $(if $(USE_SUBTARGET_CONFIG),$(LINUX_SUBTARGET_CONFIG),$(LINUX_TARGET_CONFIG))
+KERNEL_RECONFIG_LIST = $(wildcard $(GENERIC_KERNEL_CONFIG) $(KERNEL_TARGET_CONFIG) $(if $(USE_SUBTARGET_CONFIG),$(KERNEL_SUBTARGET_CONFIG)))
+KERNEL_RECONFIG_TARGET = $(if $(USE_SUBTARGET_CONFIG),$(KERNEL_SUBTARGET_CONFIG),$(KERNEL_TARGET_CONFIG))
 
 # select the config file to be changed by kernel_menuconfig/kernel_oldconfig
 ifeq ($(CONFIG_TARGET),platform)
-  LINUX_RECONFIG_LIST = $(wildcard $(GENERIC_LINUX_CONFIG) $(LINUX_TARGET_CONFIG))
-  LINUX_RECONFIG_TARGET = $(LINUX_TARGET_CONFIG)
+  KERNEL_RECONFIG_LIST = $(wildcard $(GENERIC_KERNEL_CONFIG) $(KERNEL_TARGET_CONFIG))
+  KERNEL_RECONFIG_TARGET = $(KERNEL_TARGET_CONFIG)
 endif
 ifeq ($(CONFIG_TARGET),subtarget)
-  LINUX_RECONFIG_LIST = $(wildcard $(GENERIC_LINUX_CONFIG) $(LINUX_TARGET_CONFIG) $(LINUX_SUBTARGET_CONFIG))
-  LINUX_RECONFIG_TARGET = $(LINUX_SUBTARGET_CONFIG)
+  KERNEL_RECONFIG_LIST = $(wildcard $(GENERIC_KERNEL_CONFIG) $(KERNEL_TARGET_CONFIG) $(KERNEL_SUBTARGET_CONFIG))
+  KERNEL_RECONFIG_TARGET = $(KERNEL_SUBTARGET_CONFIG)
 endif
 ifeq ($(CONFIG_TARGET),subtarget_platform)
-  LINUX_RECONFIG_LIST = $(wildcard $(GENERIC_LINUX_CONFIG) $(LINUX_SUBTARGET_CONFIG) $(LINUX_TARGET_CONFIG))
-  LINUX_RECONFIG_TARGET = $(LINUX_TARGET_CONFIG)
+  KERNEL_RECONFIG_LIST = $(wildcard $(GENERIC_KERNEL_CONFIG) $(KERNEL_SUBTARGET_CONFIG) $(KERNEL_TARGET_CONFIG))
+  KERNEL_RECONFIG_TARGET = $(KERNEL_TARGET_CONFIG)
 endif
 ifeq ($(CONFIG_TARGET),env)
-  LINUX_RECONFIG_LIST = $(LINUX_KCONFIG_LIST)
-  LINUX_RECONFIG_TARGET = $(TOPDIR)/env/kernel-config
+  KERNEL_RECONFIG_LIST = $(KERNEL_KCONFIG_LIST)
+  KERNEL_RECONFIG_TARGET = $(TOPDIR)/env/kernel-config
 endif
 
 __linux_confcmd = $(SCRIPT_DIR)/kconfig.pl $(2) $(patsubst %,+,$(wordlist 2,9999,$(1))) $(1)
 
-LINUX_CONF_CMD = $(call __linux_confcmd,$(LINUX_KCONFIG_LIST),)
-LINUX_RECONF_CMD = $(call __linux_confcmd,$(LINUX_RECONFIG_LIST),)
-LINUX_RECONF_DIFF = $(call __linux_confcmd,$(filter-out $(LINUX_RECONFIG_TARGET),$(LINUX_RECONFIG_LIST)),'>')
+KERNEL_CONF_CMD = $(call __linux_confcmd,$(KERNEL_KCONFIG_LIST),)
+KERNEL_RECONF_CMD = $(call __linux_confcmd,$(KERNEL_RECONFIG_LIST),)
+KERNEL_RECONF_DIFF = $(call __linux_confcmd,$(filter-out $(KERNEL_RECONFIG_TARGET),$(KERNEL_RECONFIG_LIST)),'>')
 
 ifeq ($(DUMP),1)
   BuildTarget=$(BuildTargets/DumpCurrent)
 
   ifneq ($(BOARD),)
     TMP_CONFIG:=$(TMP_DIR)/.kconfig-$(call target_conf,$(TARGETID))
-    $(TMP_CONFIG): $(LINUX_KCONFIG_LIST)
-		$(LINUX_CONF_CMD) > $@ || rm -f $@
+    $(TMP_CONFIG): $(KERNEL_KCONFIG_LIST)
+		$(KERNEL_CONF_CMD) > $@ || rm -f $@
     -include $(TMP_CONFIG)
     .SILENT: $(TMP_CONFIG)
     .PRECIOUS: $(TMP_CONFIG)
@@ -287,9 +287,9 @@ define BuildTargets/DumpCurrent
 	 echo 'Target-Depends: $(DEPENDS)'; \
 	 echo 'Target-Optimization: $(if $(CFLAGS),$(CFLAGS),$(DEFAULT_CFLAGS))'; \
 	 echo 'CPU-Type: $(CPU_TYPE)$(if $(CPU_SUBTYPE),+$(CPU_SUBTYPE))'; \
-	 echo 'Linux-Version: $(LINUX_VERSION)'; \
-	 echo 'Linux-Release: $(LINUX_RELEASE)'; \
-	 echo 'Linux-Kernel-Arch: $(LINUX_KARCH)'; \
+	 echo 'Linux-Version: $(KERNEL_VERSION)'; \
+	 echo 'Linux-Release: $(KERNEL_RELEASE)'; \
+	 echo 'Linux-Kernel-Arch: $(KERNEL_KARCH)'; \
 	$(if $(SUBTARGET),,$(if $(DEFAULT_SUBTARGET), echo 'Default-Subtarget: $(DEFAULT_SUBTARGET)'; )) \
 	 echo 'Target-Description:'; \
 	 echo "$$$$DESCRIPTION"; \
@@ -305,6 +305,16 @@ endef
 #  include $(INCLUDE_DIR)/kernel-build.mk
 #  BuildTarget?=$(BuildKernel)
 #endif
+
+define BuildKernel 
+dumpinfo: 	
+	echo ""
+prereq: 
+	echo "target prereq"
+compile: 
+	echo "compile target"
+endef
+
 BuildTarget?=$(BuildKernel)
 
 endif #__target_inc
