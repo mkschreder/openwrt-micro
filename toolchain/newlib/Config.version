@@ -1,0 +1,8 @@
+if USE_NEWLIB
+
+config NEWLIB_VERSION
+	string
+	depends on USE_NEWLIB
+	default "2.4.0"
+
+endif
