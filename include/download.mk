@@ -94,7 +94,6 @@ define DownloadMethod/git
 		(cd $(SUBDIR) && git checkout $(VERSION) && \
 		git submodule update --init --recursive) && \
 		echo "Packing checkout..." && \
-		rm -rf $(SUBDIR)/.git && \
 		$(call dl_pack,$(TMP_DIR)/dl/$(FILE),$(SUBDIR)) && \
 		mv $(TMP_DIR)/dl/$(FILE) $(DL_DIR)/ && \
 		rm -rf $(SUBDIR); \
