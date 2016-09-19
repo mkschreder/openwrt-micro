@@ -1,35 +1,24 @@
-This is the buildsystem for the OpenWrt Linux distribution.
+This is an adoptation of the buildroot/OpenWRT build system for bare metal
+microcontroller development. 
 
-Please use "make menuconfig" to configure your appreciated
-configuration for the toolchain and firmware.
+Main goals of this project are: 
 
-You need to have installed gcc, binutils, bzip2, flex, python, perl, make,
-find, grep, diff, unzip, gawk, getopt, subversion, libz-dev and libc headers.
+- faciliate code reuse through an automated build system that takes care of all
+  aspects of the build enciroment
+- provide a versatile build environment for cross compilation
+- build all tools from source as part of the build environment to allow easy
+  switching between various toolchains and libc implementations
 
-Run "./scripts/feeds update -a" to get all the latest package definitions
-defined in feeds.conf / feeds.conf.default respectively
-and "./scripts/feeds install -a" to install symlinks of all of them into
-package/feeds/.
+Packaging
 
-Use "make menuconfig" to configure your image.
+Software packages are created and maintained in the form of package feeds and
+package Makefiles. A package makefile defines how the package is to be built
+and where to get the source code. Most of the time build system will
+automatically take care of running automake/cmake/make etc. 
 
-Simply running "make" will build your firmware.
-It will download all sources, build the cross-compile toolchain, 
-the kernel and all choosen applications.
+Useful commands: 
+	
+	make menuconfig
+	make V=s
 
-You can use "scripts/flashing/flash.sh" for remotely updating your embedded
-system via tftp.
-
-The OpenWrt system is documented in docs/. You will need a LaTeX distribution
-and the tex4ht package to build the documentation. Type "make -C docs/" to build it.
-
-To build your own firmware you need to have access to a Linux, BSD or MacOSX system
-(case-sensitive filesystem required). Cygwin will not be supported because of
-the lack of case sensitiveness in the file system.
-
-
-Sunshine!
-	Your OpenWrt Project
-	http://openwrt.org
-
-
+More informaiton will come later as more targets and packages are added..
