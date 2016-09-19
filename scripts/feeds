@@ -389,14 +389,14 @@ sub do_install_target($) {
 		$path =~ s/\/Makefile$//;
 		my $name = $path;
 		$name =~ s/.*\///;
-		my $dest = "./target/linux/$name";
+		my $dest = "./target/bare/$name";
 
 		-e $dest and do {
 			warn "Path $dest already exists";
 			return 1;
 		};
 
-		system("ln -sf ../../$path ./target/linux/");
+		system("ln -sf ../../$path ./target/bare/");
 	} else {
 		warn "Target is not valid\n";
 		return 1;
@@ -621,7 +621,7 @@ sub uninstall {
 
 	if ($opts{a}) {
 		system("rm -rvf ./package/feeds");
-		foreach my $dir (glob "target/linux/*") {
+		foreach my $dir (glob "target/bare/*") {
 			next unless -l $dir;
 			uninstall_target($dir);
 		}
@@ -633,7 +633,7 @@ sub uninstall {
 		}
 		get_installed();
 		while ($name = shift @ARGV) {
-			my $target = "target/linux/$name";
+			my $target = "target/bare/$name";
 			-l "$target" and do {
 				uninstall_target($target);
 				$uninstall = 1;

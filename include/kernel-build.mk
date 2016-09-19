@@ -12,8 +12,8 @@ ifneq ($(DUMP),1)
 endif
 
 export QUILT=1
-STAMP_PREPARED:=$(LINUX_DIR)/.prepared
-STAMP_CONFIGURED:=$(LINUX_DIR)/.configured
+STAMP_PREPARED:=$(KERNEL_DIR)/.prepared
+STAMP_CONFIGURED:=$(KERNEL_DIR)/.configured
 include $(INCLUDE_DIR)/download.mk
 include $(INCLUDE_DIR)/quilt.mk
 include $(INCLUDE_DIR)/kernel-defaults.mk
@@ -40,18 +40,18 @@ define Kernel/Clean
 endef
 
 define Download/kernel
-  URL:=$(LINUX_SITE)
-  FILE:=$(LINUX_SOURCE)
-  MD5SUM:=$(LINUX_KERNEL_MD5SUM)
+  URL:=$(KERNEL_SITE)
+  FILE:=$(KERNEL_SOURCE)
+  MD5SUM:=$(KERNEL_KERNEL_MD5SUM)
 endef
 
 ifdef CONFIG_COLLECT_KERNEL_DEBUG
   define Kernel/CollectDebug
 	rm -rf $(KERNEL_BUILD_DIR)/debug
 	mkdir -p $(KERNEL_BUILD_DIR)/debug/modules
-	$(CP) $(LINUX_DIR)/vmlinux $(KERNEL_BUILD_DIR)/debug/
+	$(CP) $(KERNEL_DIR)/vmlinux $(KERNEL_BUILD_DIR)/debug/
 	-$(CP) \
-		$(STAGING_DIR_ROOT)/lib/modules/$(LINUX_VERSION)/* \
+		$(STAGING_DIR_ROOT)/lib/modules/$(KERNEL_VERSION)/* \
 		$(KERNEL_BUILD_DIR)/debug/modules/
 	$(FIND) $(KERNEL_BUILD_DIR)/debug -type f | $(XARGS) $(KERNEL_CROSS)strip --only-keep-debug
 	$(TAR) c -C $(KERNEL_BUILD_DIR) debug \
@@ -62,11 +62,11 @@ endif
 
 define BuildKernel
   $(if $(QUILT),$(Build/Quilt))
-  $(if $(LINUX_SITE),$(call Download,kernel))
+  $(if $(KERNEL_SITE),$(call Download,kernel))
 
   .NOTPARALLEL:
 
-  $(STAMP_PREPARED): $(if $(LINUX_SITE),$(DL_DIR)/$(LINUX_SOURCE))
+  $(STAMP_PREPARED): $(if $(KERNEL_SITE),$(DL_DIR)/$(KERNEL_SOURCE))
 	-rm -rf $(KERNEL_BUILD_DIR)
 	-mkdir -p $(KERNEL_BUILD_DIR)
 	$(Kernel/Prepare)
@@ -76,11 +76,11 @@ define BuildKernel
 	rm -f $(KERNEL_BUILD_DIR)/symtab.h
 	touch $(KERNEL_BUILD_DIR)/symtab.h
 	+$(MAKE) $(KERNEL_MAKEOPTS) vmlinux
-	find $(LINUX_DIR) $(STAGING_DIR_ROOT)/lib/modules -name \*.ko | \
+	find $(KERNEL_DIR) $(STAGING_DIR_ROOT)/lib/modules -name \*.ko | \
 		xargs $(TARGET_CROSS)nm | \
 		awk '$$$$1 == "U" { print $$$$2 } ' | \
 		sort -u > $(KERNEL_BUILD_DIR)/mod_symtab.txt
-	$(TARGET_CROSS)nm -n $(LINUX_DIR)/vmlinux.o | grep ' [rR] __ksymtab' | sed -e 's,........ [rR] __ksymtab_,,' > $(KERNEL_BUILD_DIR)/kernel_symtab.txt
+	$(TARGET_CROSS)nm -n $(KERNEL_DIR)/vmlinux.o | grep ' [rR] __ksymtab' | sed -e 's,........ [rR] __ksymtab_,,' > $(KERNEL_BUILD_DIR)/kernel_symtab.txt
 	grep -Ff $(KERNEL_BUILD_DIR)/mod_symtab.txt $(KERNEL_BUILD_DIR)/kernel_symtab.txt > $(KERNEL_BUILD_DIR)/sym_include.txt
 	grep -Fvf $(KERNEL_BUILD_DIR)/mod_symtab.txt $(KERNEL_BUILD_DIR)/kernel_symtab.txt > $(KERNEL_BUILD_DIR)/sym_exclude.txt
 	( \
@@ -102,15 +102,15 @@ define BuildKernel
 		echo; \
 	) > $$@
 
-  $(STAMP_CONFIGURED): $(STAMP_PREPARED) $(LINUX_KCONFIG_LIST) $(TOPDIR)/.config
+  $(STAMP_CONFIGURED): $(STAMP_PREPARED) $(KERNEL_KCONFIG_LIST) $(TOPDIR)/.config
 	$(Kernel/Configure)
 	touch $$@
 
-  $(LINUX_DIR)/.modules: $(STAMP_CONFIGURED) $(LINUX_DIR)/.config FORCE
+  $(KERNEL_DIR)/.modules: $(STAMP_CONFIGURED) $(KERNEL_DIR)/.config FORCE
 	$(Kernel/CompileModules)
 	touch $$@
 
-  $(LINUX_DIR)/.image: $(STAMP_CONFIGURED) $(if $(CONFIG_STRIP_KERNEL_EXPORTS),$(KERNEL_BUILD_DIR)/symtab.h) FORCE
+  $(KERNEL_DIR)/.image: $(STAMP_CONFIGURED) $(if $(CONFIG_STRIP_KERNEL_EXPORTS),$(KERNEL_BUILD_DIR)/symtab.h) FORCE
 	$(Kernel/CompileImage)
 	$(Kernel/CollectDebug)
 	touch $$@
@@ -121,19 +121,20 @@ define BuildKernel
   define BuildKernel
   endef
 
-  download: $(if $(LINUX_SITE),$(DL_DIR)/$(LINUX_SOURCE))
+  download: 
+  	$(if $(KERNEL_SITE),$(DL_DIR)/$(KERNEL_SOURCE))
   prepare: $(STAMP_CONFIGURED)
-  compile: $(LINUX_DIR)/.modules
+  compile: $(KERNEL_DIR)/.modules
 	$(MAKE) -C image compile TARGET_BUILD=
 
   oldconfig menuconfig nconfig: $(STAMP_PREPARED) $(STAMP_CHECKED) FORCE
-	rm -f $(LINUX_DIR)/.config.prev
+	rm -f $(KERNEL_DIR)/.config.prev
 	rm -f $(STAMP_CONFIGURED)
-	$(LINUX_RECONF_CMD) > $(LINUX_DIR)/.config
-	$(_SINGLE)$(MAKE) -C $(LINUX_DIR) $(KERNEL_MAKEOPTS) $$@
-	$(LINUX_RECONF_DIFF) $(LINUX_DIR)/.config > $(LINUX_RECONFIG_TARGET)
+	$(KERNEL_RECONF_CMD) > $(KERNEL_DIR)/.config
+	$(_SINGLE)$(MAKE) -C $(KERNEL_DIR) $(KERNEL_MAKEOPTS) $$@
+	$(KERNEL_RECONF_DIFF) $(KERNEL_DIR)/.config > $(KERNEL_RECONFIG_TARGET)
 
-  install: $(LINUX_DIR)/.image
+  install: $(KERNEL_DIR)/.image
 	+$(MAKE) -C image compile install TARGET_BUILD=
 
   clean: FORCE

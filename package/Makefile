@@ -94,6 +94,10 @@ PACKAGE_INSTALL_FILES:= \
 $(curdir)/cleanup: $(TMP_DIR)/.build
 	rm -rf $(STAGING_DIR_ROOT)
 
+$(curdir)/install: 
+	echo "Package install does not make sense for bare metal builds!"
+
+ifdef NONEXISTENT
 $(curdir)/install: $(TMP_DIR)/.build $(curdir)/system/opkg/host/install
 	- find $(STAGING_DIR_ROOT) -type d | $(XARGS) chmod 0755
 	rm -rf $(TARGET_DIR)
@@ -129,6 +133,7 @@ $(curdir)/install: $(TMP_DIR)/.build $(curdir)/system/opkg/host/install
 	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.prerm*
 	$(if $(CONFIG_CLEAN_IPKG),rm -rf $(TARGET_DIR)/usr/lib/opkg)
 	$(call mklibs)
+endif 
 
 PASSOPT=""
 PASSARG=""
@@ -191,6 +196,6 @@ $(curdir)/flags-install:= -j1
 $(eval $(call stampfile,$(curdir),package,prereq,.config))
 $(eval $(call stampfile,$(curdir),package,cleanup,$(TMP_DIR)/.build))
 $(eval $(call stampfile,$(curdir),package,compile,$(TMP_DIR)/.build))
-$(eval $(call stampfile,$(curdir),package,install,$(TMP_DIR)/.build))
+#$(eval $(call stampfile,$(curdir),package,install,$(TMP_DIR)/.build))
 
 $(eval $(call subdir,$(curdir)))

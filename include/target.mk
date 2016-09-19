@@ -202,7 +202,7 @@ ifeq ($(DUMP),1)
     # remove duplicates
     FEATURES:=$(sort $(FEATURES))
   endif
-  CPU_CFLAGS = 
+  CPU_CFLAGS ?= 
   ifneq ($(findstring mips,$(ARCH)),)
     ifneq ($(findstring mips64,$(ARCH)),)
       CPU_TYPE ?= mips64
@@ -227,8 +227,14 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_pentium4 = -march=pentium4
     CPU_CFLAGS_geode = -march=geode -mmmx -m3dnow
   endif
+  ifeq ($(ARCH),avr)
+    CPU_TYPE ?= atmega328p 
+	CPU_CFLAGS := -Os
+    #CPU_CFLAGS_atmega328p += -mmcu=atmega328p -DF_CPU=16000000UL
+  endif
   ifneq ($(findstring arm,$(ARCH)),)
     CPU_TYPE ?= xscale
+	CPU_CFLAGS = 
     CPU_CFLAGS_arm920t = -march=armv4t -mtune=arm920t
     CPU_CFLAGS_arm926ej-s = -march=armv5te -mtune=arm926ej-s
     CPU_CFLAGS_arm1136j-s = -march=armv6 -mtune=arm1136j-s
@@ -307,12 +313,14 @@ endef
 #endif
 
 define BuildKernel 
+install:
+	echo "buildkernel: install"
 dumpinfo: 	
 	echo ""
 prereq: 
-	echo "target prereq"
+	echo "buildkernel prereq"
 compile: 
-	echo "compile target"
+	echo "buildkernel compile"
 endef
 
 BuildTarget?=$(BuildKernel)
