@@ -52,7 +52,9 @@ BINUTILS_CONFIGURE:= \
 		--with-sysroot=$(TOOLCHAIN_DIR) \
 		--enable-deterministic-archives \
 		--enable-plugins \
-		--disable-multilib \
+		--enable-multilib \
+		--enable-interwork \
+		--enable-lto \
 		--disable-werror \
 		--disable-nls \
 		--disable-sim \

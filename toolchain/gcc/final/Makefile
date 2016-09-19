@@ -3,13 +3,15 @@ GCC_VARIANT:=final
 include ../common.mk
 
 GCC_CONFIGURE += \
+	--with-newlib \
 	--with-headers=$(TOOLCHAIN_DIR)/include \
 	--disable-libsanitizer \
 	--enable-languages=$(TARGET_LANGUAGES) \
-	--enable-shared \
-	--enable-threads \
-	--with-slibdir=$(TOOLCHAIN_DIR)/lib \
+	--enable-interwork \
 	--enable-lto \
+	--disable-shared \
+	--disable-threads \
+	--with-slibdir=$(TOOLCHAIN_DIR)/lib \
 	--with-libelf=$(TOPDIR)/staging_dir/host
 
 ifdef CONFIG_USE_MUSL
@@ -62,12 +64,14 @@ define Host/Install
 	# Set up the symlinks to enable lying about target name.
 	set -e; \
 	(cd $(TOOLCHAIN_DIR); \
-		ln -sf $(REAL_GNU_TARGET_NAME) $(GNU_TARGET_NAME); \
-		cd bin; \
-		for app in $(REAL_GNU_TARGET_NAME)-* ; do \
-			ln -sf $$$${app} \
-		   	$(GNU_TARGET_NAME)$$$${app##$(REAL_GNU_TARGET_NAME)}; \
-		done; \
+		[ "$(REAL_GNU_TARGET_NAME)" = "$(GNU_TARGET_NAME)" ] || { \
+			ln -sf $(REAL_GNU_TARGET_NAME) $(GNU_TARGET_NAME); \
+			cd bin; \
+			for app in $(REAL_GNU_TARGET_NAME)-* ; do \
+				ln -sf $$$${app} \
+				$(GNU_TARGET_NAME)$$$${app##$(REAL_GNU_TARGET_NAME)}; \
+			done; \
+		} \
 	);
 	$(if $(CONFIG_EXTRA_TARGET_ARCH),$(call SetupExtraArch))
 	$(RM) $(TOOLCHAIN_DIR)/lib/libiberty.a

@@ -6,8 +6,11 @@ GCC_CONFIGURE += \
 	--with-newlib \
 	--without-headers \
 	--enable-languages=c \
+	--enable-multilib \
+	--enable-lto \
 	--disable-libsanitizer \
 	--disable-libssp \
+	--disable-nls\
 	--disable-shared \
 	--disable-threads
 

@@ -58,50 +58,28 @@ menuconfig EXTERNAL_TOOLCHAIN
 		string
 		prompt "Target name"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
-		default "aarch64-unknown-linux-gnu"  if aarch64
-		default "aarch64-unknown-linux-gnu"  if aarch64
-		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
 		default "arm-none-eabi"      if arm
-		default "armeb-unknown-linux-gnu"    if armeb
-		default "i486-unknown-linux-gnu"     if i386
-		default "mips-unknown-linux-gnu"     if mips
-		default "mipsel-unknown-linux-gnu"   if mipsel
-		default "powerpc-unknown-linux-gnu"  if powerpc
-		default "x86_64-unknown-linux-gnu"   if x86_64
+		default "avr"      if avr
 
 	config TOOLCHAIN_PREFIX
 		string
 		prompt "Toolchain prefix"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
-		default "aarch64-unknown-linux-gnu"  if aarch64
-		default "aarch64_be-unknown-linux-gnu"  if aarch64_be
 		default "arm-none-eabi-"      if arm
-		default "armeb-unknown-linux-gnu-"    if armeb
-		default "i486-unknown-linux-gnu-"     if i386
-		default "mips-unknown-linux-gnu-"     if mips
-		default "mipsel-unknown-linux-gnu-"   if mipsel
-		default "powerpc-unknown-linux-gnu-"  if powerpc
-		default "x86_64-unknown-linux-gnu-"   if x86_64
+		default "avr"      if avr
 
 	config TOOLCHAIN_ROOT
 		string
 		prompt "Toolchain root"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
-		default "/opt/cross/aarch64-unknown-linux-gnu"  if aarch64
-		default "/opt/cross/aarch64_be-unknown-linux-gnu"  if aarch64_be
 		default "/opt/cross/arm-none-eabi"      if arm
-		default "/opt/cross/armeb-unknown-linux-gnu"    if armeb
-		default "/opt/cross/i486-unknown-linux-gnu"     if i386
-		default "/opt/cross/mips-unknown-linux-gnu"     if mips
-		default "/opt/cross/mipsel-unknown-linux-gnu"   if mipsel
-		default "/opt/cross/powerpc-unknown-linux-gnu"  if powerpc
-		default "/opt/cross/x86_64-unknown-linux-gnu"   if x86_64
+		default "/opt/cross/avr-gcc"      if avr
 
 	config TOOLCHAIN_LIBC
 		string
 		prompt "Toolchain libc"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
-		default "uclibc"
+		default "newlib"
 		help
 		  Specify the libc type used by the external toolchain. The given value
 		  is passed as -m flag to all gcc and g++ invocations. This is mainly
@@ -220,23 +198,22 @@ choice
 	config LIBC_USE_GLIBC
 		bool "Use (e)glibc"
 		select USE_GLIBC
-		depends on !arc
+		depends on !(arc || avr)
 
-	config LIBC_USE_UCLIBC
-		select USE_UCLIBC
-		bool "Use uClibc"
-		depends on !(aarch64 || aarch64_be)
-		depends on BROKEN || !(arm || armeb || i386 || x86_64 || mips || mipsel || mips64 || mips64el || powerpc)
+	config LIBC_USE_AVR_LIBC
+		select USE_AVR_LIBC
+		bool "Use avr-libc"
+		depends on avr
 
-	config LIBC_USE_MUSL
-		select USE_MUSL
-		bool "Use musl"
-		depends on !(arc)
+	config LIBC_USE_NEWLIB
+		select USE_NEWLIB
+		bool "Use newlib"
+		depends on arm
+
 
 endchoice
 
 source "toolchain/glibc/Config.in"
-source "toolchain/uClibc/Config.in"
 
 comment "Debuggers"
 	depends on TOOLCHAINOPTS
@@ -260,11 +237,11 @@ config INSIGHT
 config USE_GLIBC
 	bool
 
-config USE_UCLIBC
-	default y if !TOOLCHAINOPTS && !EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN && (arc)
+config USE_AVR_LIBC
+	default y if !TOOLCHAINOPTS && !EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN && avr
 	bool
 
-config USE_MUSL
+config USE_NEWLIB
 	default y if !TOOLCHAINOPTS && !EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN && !(arc)
 	bool
 
@@ -276,29 +253,26 @@ source "toolchain/binutils/Config.version"
 source "toolchain/gcc/Config.version"
 
 source "toolchain/glibc/Config.version"
-source "toolchain/uClibc/Config.version"
-source "toolchain/musl/Config.version"
+source "toolchain/avrlibc/Config.version"
+source "toolchain/newlib/Config.version"
 
 config LIBC
 	string
 	default "glibc"   if USE_GLIBC
-	default "uClibc"  if USE_UCLIBC
-	default "musl"	  if USE_MUSL
+	default "avrlibc"	  if USE_AVR_LIBC
+	default "newlib"	  if USE_NEWLIB
 
 config LIBC_VERSION
 	string
 	default GLIBC_VERSION   if USE_GLIBC
-	default UCLIBC_VERSION  if USE_UCLIBC
-	default MUSL_VERSION	if USE_MUSL
+	default AVR_LIBC_VERSION	if USE_AVR_LIBC
+	default NEWLIB_VERSION if USE_NEWLIB
 
+# this is system type (ie none-eabi etc)
 config TARGET_SUFFIX
 	string
-	default "gnueabi"         if USE_GLIBC && (arm || armeb)
-	default "gnu"             if USE_GLIBC && !(arm || armeb)
-	default "uclibcgnueabi"   if USE_UCLIBC && (arm || armeb)
-	default "uclibc"          if USE_UCLIBC && !(arm || armeb)
-	default "muslgnueabi"     if USE_MUSL && (arm || armeb)
-	default "musl"            if USE_MUSL && !(arm || armeb)
+	default ""            if USE_AVR_LIBC && !(arm || armeb)
+	default "eabi"            if USE_NEWLIB && (arm)
 
 config MIPS64_ABI
 	depends on mips64 || mips64el

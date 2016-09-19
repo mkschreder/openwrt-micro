@@ -4,13 +4,15 @@ include ../common.mk
 
 GCC_CONFIGURE += \
 	--with-newlib \
+	--enable-lto \
+	--enable-interwork \
+	--enable-multilib \
 	--with-sysroot=$(TOOLCHAIN_DIR) \
 	--enable-languages=c \
 	--disable-shared \
 	--disable-threads \
 
 define Host/Compile
-	$(CP) $(BUILD_DIR_TOOLCHAIN)/linux-dev/* $(BUILD_DIR_TOOLCHAIN)/$(LIBC)-dev/
 	+$(GCC_MAKE) $(HOST_JOBS) -C $(GCC_BUILD_DIR) \
 		all-build-libiberty \
 		all-gcc \

@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME := firmware-utils
 
 include $(INCLUDE_DIR)/host-build.mk
-include $(INCLUDE_DIR)/kernel.mk
+#include $(INCLUDE_DIR)/kernel.mk
 
 define cc
 	$(HOSTCC) $(HOST_CFLAGS) -include endian.h $(HOST_LDFLAGS) -o $(HOST_BUILD_DIR)/bin/$(firstword $(1)) $(foreach src,$(1),src/$(src).c) $(2)
