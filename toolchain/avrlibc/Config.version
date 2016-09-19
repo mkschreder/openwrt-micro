@@ -1,0 +1,8 @@
+if USE_AVR_LIBC
+
+config AVR_LIBC_VERSION
+	string
+	depends on USE_AVR_LIBC
+	default "2.0.0"
+
+endif

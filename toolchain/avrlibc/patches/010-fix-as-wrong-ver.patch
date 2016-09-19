@@ -1,0 +1,10 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -155,6 +155,7 @@ case "${CC}" in
+ esac
+ case "${AS}" in
+    *avr*as*) ;;
++   *avr*gcc*) ;;
+    *) AC_MSG_ERROR(Wrong assembler found; check the PATH!) ;;
+ esac
+ case "${AR}" in
