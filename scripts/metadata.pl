@@ -343,14 +343,24 @@ EOF
 	}
 	print <<EOF;
 
-config DEFAULT_TARGET_OPTIMIZATION
+config TARGET_CFLAGS
 	string
 EOF
 	foreach my $target (@target) {
 		next if @{$target->{subtargets}} > 0;
 		print "\tdefault \"".$target->{cflags}."\" if TARGET_".$target->{conf}."\n";
 	}
-	print "\tdefault \"-Os -nostdlib -nostartfiles -nodefaultlibs -ffreestanding\"\n";
+	print "\tdefault \"-Os\"\n";
+	print <<EOF;
+
+config TARGET_LDFLAGS
+	string
+EOF
+	foreach my $target (@target) {
+		next if @{$target->{subtargets}} > 0;
+		print "\tdefault \"".$target->{ldflags}."\" if TARGET_".$target->{conf}."\n";
+	}
+	print "\tdefault \"\"\n";
 	print <<EOF;
 
 config CPU_TYPE

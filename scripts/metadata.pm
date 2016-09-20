@@ -74,7 +74,8 @@ sub parse_target_metadata($) {
 		/^Target-Features:\s*(.+)\s*$/ and $target->{features} = [ split(/\s+/, $1) ];
 		/^Target-Depends:\s*(.+)\s*$/ and $target->{depends} = [ split(/\s+/, $1) ];
 		/^Target-Description:/ and $target->{desc} = get_multiline(*FILE);
-		/^Target-Optimization:\s*(.+)\s*$/ and $target->{cflags} = $1;
+		/^Target-CFLAGS:\s*(.+)\s*$/ and $target->{cflags} = $1;
+		/^Target-LDFLAGS:\s*(.+)\s*$/ and $target->{ldflags} = $1;
 		/^CPU-Type:\s*(.+)\s*$/ and $target->{cputype} = $1;
 		/^Linux-Version:\s*(.+)\s*$/ and $target->{version} = $1;
 		/^Linux-Release:\s*(.+)\s*$/ and $target->{release} = $1;
