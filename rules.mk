@@ -105,7 +105,7 @@ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
   GNU_TARGET_NAME=$(OPTIMIZE_FOR_CPU)-none
   DIR_SUFFIX:=_$(LIBC)-$(LIBCV)$(if $(CONFIG_arm),_eabi)
   BIN_DIR:=$(BIN_DIR)$(if $(CONFIG_USE_MUSL),,-$(LIBC))
-  TARGET_DIR_NAME = target-$(ARCH)$(ARCH_SUFFIX)$(DIR_SUFFIX)$(if $(BUILD_SUFFIX),_$(BUILD_SUFFIX))
+  TARGET_DIR_NAME = target-$(BOARD)-$(ARCH)$(ARCH_SUFFIX)$(DIR_SUFFIX)$(if $(BUILD_SUFFIX),_$(BUILD_SUFFIX))
   TOOLCHAIN_DIR_NAME = toolchain-$(ARCH)$(ARCH_SUFFIX)_gcc-$(GCCV)$(DIR_SUFFIX)
 else
   ifeq ($(CONFIG_NATIVE_TOOLCHAIN),)
@@ -142,12 +142,12 @@ TARGET_PATH:=$(subst $(space),:,$(filter-out .,$(filter-out ./,$(subst :,$(space
 TARGET_INIT_PATH:=$(call qstrip,$(CONFIG_TARGET_INIT_PATH))
 TARGET_INIT_PATH:=$(if $(TARGET_INIT_PATH),$(TARGET_INIT_PATH),/usr/sbin:/sbin:/usr/bin:/bin)
 # note: changing from openwrt using just TARGET_OPTIMIZATION to using the config value that is set in target.mk
-TARGET_CFLAGS:=$(call qstrip,$(CONFIG_DEFAULT_TARGET_OPTIMIZATION))$(if $(CONFIG_DEBUG), -g3) $(call qstrip,$(CONFIG_EXTRA_OPTIMIZATION))
+TARGET_CFLAGS:=$(call qstrip,$(CONFIG_TARGET_CFLAGS))$(if $(CONFIG_DEBUG), -g3) $(call qstrip,$(CONFIG_EXTRA_OPTIMIZATION))
 TARGET_CXXFLAGS = $(TARGET_CFLAGS)
 TARGET_ASFLAGS_DEFAULT = $(TARGET_CFLAGS)
 TARGET_ASFLAGS = $(TARGET_ASFLAGS_DEFAULT)
 TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include
-TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib 
+TARGET_LDFLAGS:=$(call qstrip,$(CONFIG_TARGET_LDFLAGS)) -L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib 
 ifneq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
 LIBGCC_S_PATH=$(realpath $(wildcard $(call qstrip,$(CONFIG_LIBGCC_ROOT_DIR))/$(call qstrip,$(CONFIG_LIBGCC_FILE_SPEC))))
 LIBGCC_S=$(if $(LIBGCC_S_PATH),-L$(dir $(LIBGCC_S_PATH)) -lgcc_s)
