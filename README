@@ -18,7 +18,25 @@ automatically take care of running automake/cmake/make etc.
 
 Useful commands: 
 	
+	./scripts/feeds update -a
+	./scripts/feeds install -a
 	make menuconfig
 	make V=s
 
 More informaiton will come later as more targets and packages are added..
+
+Target Selection
+----------------
+
+Targets are board configurations. Each board type can have a number of board
+profiles. Currently profiles are not used but they can be used as a way to
+select default options for other parts of the configuration. 
+
+Target is configured using ARCH and BOARD parameters. ARCH determines the
+toolchain to be used to build the code and board specifies the type of board.
+Target directory name must currently be the same as the value of the BOARD
+variable defined in the target Makefile. 
+
+The final results of a build are placed in the bin directory that has
+subdirectories that are named after board names together with libc version names.  
+
