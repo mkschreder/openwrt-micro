@@ -277,7 +277,11 @@ ifeq ($(DUMP),1)
     CPU_CFLAGS_archs = -marchs
   endif
   DEFAULT_CFLAGS=$(strip $(CPU_CFLAGS) $(CPU_CFLAGS_$(CPU_TYPE)) $(CPU_CFLAGS_$(CPU_SUBTYPE)))
+  DEFAULT_LDFLAGS=
 endif
+
+COMMON_CFLAGS=-Os -fno-common -nostdlib -fno-builtin -ffreestanding 
+COMMON_LDFLAGS=-nostartfiles
 
 define BuildTargets/DumpCurrent
   .PHONY: dumpinfo
@@ -292,8 +296,8 @@ define BuildTargets/DumpCurrent
 	 echo 'Target-Features: $(FEATURES)'; \
 	 echo 'Target-Depends: $(DEPENDS)'; \
 	 echo 'Target-Optimization: $(if $(CFLAGS),$(CFLAGS),$(DEFAULT_CFLAGS))'; \
-	 echo 'Target-CFLAGS: $(if $(CFLAGS),$(CFLAGS),$(DEFAULT_CFLAGS))'; \
-	 echo 'Target-LDFLAGS: $(if $(LDFLAGS),$(LDFLAGS),$(DEFAULT_LDFLAGS))'; \
+	 echo 'Target-CFLAGS: $(COMMON_CFLAGS) $(if $(CFLAGS),$(CFLAGS),$(DEFAULT_CFLAGS))'; \
+	 echo 'Target-LDFLAGS: $(COMMON_LDFLAGS) $(if $(LDFLAGS),$(LDFLAGS),$(DEFAULT_LDFLAGS))'; \
 	 echo 'CPU-Type: $(CPU_TYPE)$(if $(CPU_SUBTYPE),+$(CPU_SUBTYPE))'; \
 	 echo 'Linux-Version: $(KERNEL_VERSION)'; \
 	 echo 'Linux-Release: $(KERNEL_RELEASE)'; \
