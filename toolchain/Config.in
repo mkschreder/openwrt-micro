@@ -9,7 +9,7 @@ menuconfig TARGET_OPTIONS
 
 	config TARGET_OPTIMIZATION
 		string "Target Optimizations" if TARGET_OPTIONS
-		default DEFAULT_TARGET_OPTIMIZATION
+		default ""
 		help
 		  Optimizations to use when building for the target host.
 
@@ -190,8 +190,7 @@ comment "C Library"
 
 choice
 	prompt "C Library implementation" if TOOLCHAINOPTS
-	default LIBC_USE_UCLIBC if arc
-	default LIBC_USE_MUSL
+	default LIBC_USE_NEWLIB if arm
 	help
 	  Select the C library implementation.
 
@@ -272,7 +271,7 @@ config LIBC_VERSION
 config TARGET_SUFFIX
 	string
 	default ""            if USE_AVR_LIBC && !(arm || armeb)
-	default "eabi"            if USE_NEWLIB && (arm)
+	default "none-eabi"            if USE_NEWLIB && (arm)
 
 config MIPS64_ABI
 	depends on mips64 || mips64el

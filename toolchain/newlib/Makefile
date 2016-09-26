@@ -20,7 +20,7 @@ define Host/SetToolchainInfo
 endef
 
 define Host/Compile
-	$(MAKE) $(HOST_JOBS) $(NEWLIB_MAKEOPTS) all all-target all-target-libgloss 
+	$(MAKE) $(HOST_JOBS) $(NEWLIB_MAKEOPTS) all all-target-newlib all-target-libgloss 
 endef
 
 define Host/Install

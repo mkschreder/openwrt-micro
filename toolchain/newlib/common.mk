@@ -36,6 +36,7 @@ NEWLIB_CONFIGURE:= \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	$(HOST_BUILD_DIR)/configure \
 		--prefix=/ \
+		--with-newlib \
 		--host=$(REAL_GNU_TARGET_NAME) \
 		--target=$(REAL_GNU_TARGET_NAME) 
 

@@ -92,7 +92,7 @@ ifdef CONFIG_MIPS64_ABI
   endif
 endif
 
-TARGET_SYSTEM:=none
+TARGET_SYSTEM:=
 DL_DIR:=$(if $(call qstrip,$(CONFIG_DOWNLOAD_FOLDER)),$(call qstrip,$(CONFIG_DOWNLOAD_FOLDER)),$(TOPDIR)/dl)
 BIN_DIR:=$(if $(call qstrip,$(CONFIG_BINARY_FOLDER)),$(call qstrip,$(CONFIG_BINARY_FOLDER)),$(TOPDIR)/bin/$(BOARD))
 INCLUDE_DIR:=$(TOPDIR)/include
