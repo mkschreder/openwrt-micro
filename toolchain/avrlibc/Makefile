@@ -27,7 +27,7 @@ define Host/Install
 	$(MAKE) $(AVR_LIBC_MAKEOPTS) DESTDIR="$(TOOLCHAIN_DIR)/usr/" install
 	# FIXME: we currently copy this manually for atmega but somehow compiler needs to be able to find them automatically based on -mmcu flag. 
 	# copy crtatmega and libatmega
-	$(CP) $(TOOLCHAIN_DIR)/lib/avr5/*atmega* $(TOOLCHAIN_DIR)/lib/
+	#$(CP) $(BUILD_DIR)/avr-libc/lib/* $(TOOLCHAIN_DIR)/lib/
 endef
 
 $(eval $(call HostBuild))

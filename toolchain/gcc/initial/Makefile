@@ -3,7 +3,6 @@ GCC_VARIANT:=initial
 include ../common.mk
 
 GCC_CONFIGURE += \
-	--with-newlib \
 	--enable-lto \
 	--enable-interwork \
 	--enable-multilib \

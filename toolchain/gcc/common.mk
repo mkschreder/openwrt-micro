@@ -93,6 +93,7 @@ GCC_CONFIGURE:= \
 		CXXFLAGS="-O2 -fbracket-depth=512 -pipe" \
 	) \
 	$(HOST_SOURCE_DIR)/configure \
+		$(if $(CONFIG_USE_NEWLIB),--with-newlib) \
 		--with-bugurl=$(BUGURL) \
 		--with-pkgversion="$(PKGVERSION)" \
 		--prefix=$(TOOLCHAIN_DIR) \
@@ -103,8 +104,11 @@ GCC_CONFIGURE:= \
 		--enable-target-optspace \
 		--disable-libgomp \
 		--disable-libmudflap \
-		--disable-multilib \
 		--disable-nls \
+		--disable-libssp \
+		--disable-threads \
+		--disable-libsanitizer \
+		--with-dwarf2 \
 		$(GRAPHITE_CONFIGURE) \
 		--with-host-libstdcxx=-lstdc++ \
 		$(SOFT_FLOAT_CONFIG_OPTION) \

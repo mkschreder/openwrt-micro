@@ -34,6 +34,11 @@ ifdef CONFIG_USE_MIPS16
     TARGET_CFLAGS += -mips16 -minterlink-mips16
   endif
 endif
+# TODO: figure out how to make gcc find these automatically
+ifdef CONFIG_USE_AVR_LIBC
+	TARGET_CFLAGS += -I$(TOOLCHAIN_DIR)/usr/avr/include/ 
+	TARGET_LDFLAGS += -L$(TOOLCHAIN_DIR)/usr/avr/lib/avr5 -B$(TOOLCHAIN_DIR)/usr/avr/lib/avr5
+endif
 ifeq ($(strip $(PKG_IREMAP)),1)
   IREMAP_CFLAGS = $(call iremap,$(PKG_BUILD_DIR),$(notdir $(PKG_BUILD_DIR)))
   TARGET_CFLAGS += $(IREMAP_CFLAGS)

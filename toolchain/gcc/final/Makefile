@@ -3,14 +3,14 @@ GCC_VARIANT:=final
 include ../common.mk
 
 GCC_CONFIGURE += \
-	--with-newlib \
+	$(if $(CONFIG_USE_NEWLIB),--with-newlib) \
 	--with-headers=$(TOOLCHAIN_DIR)/include \
-	--disable-libsanitizer \
 	--enable-languages=$(TARGET_LANGUAGES) \
 	--enable-interwork \
 	--enable-lto \
+	--disable-multilib \
 	--disable-shared \
-	--disable-threads \
+	--enable-static \
 	--with-slibdir=$(TOOLCHAIN_DIR)/lib \
 	--with-libelf=$(TOPDIR)/staging_dir/host
 

@@ -280,8 +280,8 @@ ifeq ($(DUMP),1)
   DEFAULT_LDFLAGS=
 endif
 
-COMMON_CFLAGS=-Os -fno-common -nostdlib -fno-builtin -ffreestanding 
-COMMON_LDFLAGS=-nostartfiles
+#COMMON_CFLAGS=-Os -fno-common -nostdlib -fno-builtin -ffreestanding 
+#COMMON_LDFLAGS=-nostartfiles
 
 define BuildTargets/DumpCurrent
   .PHONY: dumpinfo

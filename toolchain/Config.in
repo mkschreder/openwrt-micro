@@ -65,7 +65,7 @@ menuconfig EXTERNAL_TOOLCHAIN
 		string
 		prompt "Toolchain prefix"  if DEVEL
 		depends on EXTERNAL_TOOLCHAIN && !NATIVE_TOOLCHAIN
-		default "arm-none-eabi-"      if arm
+		default "arm-none-eabi"      if arm
 		default "avr"      if avr
 
 	config TOOLCHAIN_ROOT

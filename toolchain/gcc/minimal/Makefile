@@ -3,7 +3,6 @@ GCC_VARIANT:=minimal
 include ../common.mk
 
 GCC_CONFIGURE += \
-	--with-newlib \
 	--without-headers \
 	--enable-languages=c \
 	--enable-multilib \

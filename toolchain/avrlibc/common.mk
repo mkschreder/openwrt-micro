@@ -39,7 +39,8 @@ AVR_LIBC_CONFIGURE:= \
 	./bootstrap && $(HOST_BUILD_DIR)/configure \
 		--prefix=/ \
 		--host=avr \
-		--disable-nls \
+		--disable-shared \
+		--enable-static \
 
 define Host/Prepare
 	$(call Host/Prepare/Default)
